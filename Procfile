@@ -1,1 +1,1 @@
-web: gunicorn laango.wsgi:application --bind 0.0.0.0:${PORT:-8000}
+web: python3 manage.py migrate --noinput && gunicorn laango.wsgi:application --bind 0.0.0.0:$PORT

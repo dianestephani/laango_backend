@@ -5,6 +5,9 @@ A Django REST Framework backend for the Laango project.
 ## Change Log and Features in Progress:
 - Twilio is set up. Need to accept incoming text messages and update job assignment and status.
 
+## To Access Live Demo:
+- Live demo is available [here](https://laango-app-ca0a792eac66.herokuapp.com/admin). Use sample_user and sample_password as the login credentials, which should grant you read-only access to view functionality.
+
 ## Features
 
 - Django 5.2.8
