@@ -2,6 +2,9 @@
 
 A Django REST Framework backend for the Laango project.
 
+## Change Log and Features in Progress:
+- Twilio is set up. Need to accept incoming text messages and update job assignment and status.
+
 ## Features
 
 - Django 5.2.8
