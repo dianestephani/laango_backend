@@ -3,9 +3,8 @@ from django.db import models
 
 class Job(models.Model):
     JOB_TYPE_CHOICES = [
-        ('translation', 'Translation'),
-        ('interpretation', 'Interpretation'),
-        ('transcription', 'Transcription'),
+        ('medical', 'Medical'),
+        ('legal', 'Legal'),
         ('other', 'Other'),
     ]
 
@@ -21,7 +20,7 @@ class Job(models.Model):
     location = models.CharField(max_length=255, help_text="Address of the job location")
     date = models.DateField()
     time = models.TimeField()
-    job_type = models.CharField(max_length=50, choices=JOB_TYPE_CHOICES, default='translation')
+    job_type = models.CharField(max_length=50, choices=JOB_TYPE_CHOICES, default='medical')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='unassigned')
     requires_dshs_certification = models.BooleanField(default=False, help_text="Does this job require DSHS certification?")
     created_at = models.DateTimeField(auto_now_add=True)
