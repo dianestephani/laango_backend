@@ -1,8 +1,5 @@
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
-
 [phases.build]
 cmds = ["python manage.py collectstatic --noinput"]
 
 [start]
-cmd = "gunicorn laango.wsgi --log-file -"
+cmd = "gunicorn laango.wsgi --bind 0.0.0.0:$PORT"
