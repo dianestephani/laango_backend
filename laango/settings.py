@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "api",
     "jobs",
     "accounts",
+    "job_requests",
 ]
 
 MIDDLEWARE = [
@@ -153,3 +154,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
+
+# Twilio Settings
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID', default='')
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default='')
+TWILIO_PHONE_NUMBER = config('TWILIO_PHONE_NUMBER', default='')
