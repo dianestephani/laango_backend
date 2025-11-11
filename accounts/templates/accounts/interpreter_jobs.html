@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ interpreter.first_name }} {{ interpreter.last_name }} - My Jobs</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8 px-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Navigation -->
+            <div class="bg-white shadow rounded-lg p-4 mb-6">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-900">
+                        {{ interpreter.first_name }} {{ interpreter.last_name }}
+                    </h1>
+                    <div class="flex gap-3">
+                        <a href="{% url 'accounts:interpreter-jobs-page' interpreter.id %}"
+                           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700">
+                            My Jobs
+                        </a>
+                        <a href="{% url 'accounts:available-jobs-page' interpreter.id %}"
+                           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                            Available Jobs
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Header Info -->
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <p class="text-gray-600">{{ interpreter.email_address }}</p>
+                <p class="text-gray-600">{{ interpreter.phone_number }}</p>
+                <div class="mt-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        Total Jobs: {{ total_jobs }}
+                    </span>
+                    {% if interpreter.dshs_certified %}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 ml-2">
+                        DSHS Certified
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Projected Earnings -->
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-1">Projected Earnings</h2>
+                        <p class="text-sm text-gray-600">Total earnings from all assigned jobs</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-4xl font-bold text-green-700">
+                            ${{ projected_earnings|floatformat:2 }}
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">from {{ total_jobs }} job{{ total_jobs|pluralize }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs List -->
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">My Assigned Jobs</h2>
+                </div>
+
+                {% if jobs %}
+                <div class="divide-y divide-gray-200">
+                    {% for job in jobs %}
+                    <div class="p-6 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <!-- Job Languages and Type -->
+                                <div class="flex items-center mb-2">
+                                    <span class="text-lg font-semibold text-gray-900">
+                                        {% for language in job.get_languages %}
+                                            {{ language }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                    <span class="ml-3 px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-800">
+                                        {{ job.get_job_type_display }}
+                                    </span>
+                                </div>
+
+                                <!-- Date and Time -->
+                                <div class="flex items-center text-sm text-gray-600 mb-2">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    {{ job.date|date:"F d, Y" }} at {{ job.time|time:"g:i A" }}
+                                </div>
+
+                                <!-- Location -->
+                                <div class="flex items-center text-sm text-gray-600 mb-2">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    {{ job.street_address }}, {{ job.city }}, {{ job.state }} {{ job.zip_code }}
+                                </div>
+
+                                <!-- DSHS Required -->
+                                {% if job.requires_dshs_certification %}
+                                <div class="flex items-center text-sm text-amber-600 mb-2">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    DSHS Certification Required
+                                </div>
+                                {% endif %}
+
+                                <!-- Payment Info -->
+                                <div class="flex items-center gap-4 mt-3">
+                                    <div class="flex items-center text-sm font-semibold text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        ${{ job.payment }}
+                                    </div>
+                                    {% if job.mileage_included %}
+                                    <div class="flex items-center text-sm text-blue-600">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                        </svg>
+                                        Mileage Included
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Status Badge -->
+                            <div class="ml-4">
+                                {% if job.status == 'unassigned' %}
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-800">
+                                    Unassigned
+                                </span>
+                                {% elif job.status == 'assigned' %}
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-800">
+                                    Assigned
+                                </span>
+                                {% elif job.status == 'in_progress' %}
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800">
+                                    In Progress
+                                </span>
+                                {% elif job.status == 'completed' %}
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
+                                    Completed
+                                </span>
+                                {% elif job.status == 'cancelled' %}
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800">
+                                    Cancelled
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="p-12 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">No jobs assigned</h3>
+                    <p class="mt-1 text-sm text-gray-500">You currently have no jobs assigned to you.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
